@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+:root {
+  --background: #17140f;
+  --foreground: #f3ece3;
+
+  --bg-surface: #211d18;
+  --bg-elevated: #2b2620;
+  --text-secondary: #a79a8a;
+
+  --accent-primary: #d9714b;
+  --accent-gamify: #e3a857;
+  --accent-blue: #5b8def;
+  --accent-purple: #8b7fd9;
+  --accent-red: #d9605b;
+  --accent-teal: #4fa8a0;
+
+  --state-success: #7ca982;
+  --state-warning: #c75c4a;
+  --state-premium: #b8935a;
+
+  --gold-soft: #f6dfa0;
+  --gold: #d6a648;
+  --gold-deep: #6e4e14;
+  --ink: #0c0a07;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-text-secondary: var(--text-secondary);
+
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-gamify: var(--accent-gamify);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-red: var(--accent-red);
+  --color-accent-teal: var(--accent-teal);
+
+  --color-state-success: var(--state-success);
+  --color-state-warning: var(--state-warning);
+  --color-state-premium: var(--state-premium);
+
+  --color-gold-soft: var(--gold-soft);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-ink: var(--ink);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+}
+
+@layer base {
+  :where(a, button, summary, [role="button"], input, select, textarea):focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .constellation-dot {
+    animation: dot-pulse 3.2s ease-in-out infinite;
+  }
+
+  .animate-card-in {
+    animation: card-in 0.5s ease-out;
+  }
+
+  .hero-slide {
+    transition: opacity 1200ms ease-in-out;
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 34s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ── Cards ─────────────────────────────────────────────────────────
+   One clean look everywhere: dark surface, hairline border, soft shadow,
+   gold only as an accent. In the components layer so utilities can override. */
+
+@layer components {
+  .card-surface,
+  .subject-card-face,
+  .deck-face {
+    border: 1px solid rgb(255 255 255 / 0.07);
+    border-radius: 1.25rem;
+    background: var(--bg-surface);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.04),
+      0 18px 36px -18px rgb(0 0 0 / 0.8);
+  }
+
+  /* inset panel for artwork, emoji and logos */
+  .card-well {
+    background:
+      radial-gradient(75% 65% at 50% 42%, rgb(255 255 255 / 0.07), transparent 72%),
+      var(--bg-elevated);
+  }
+
+  .subject-card {
+    position: relative;
+  }
+
+  /* Lives between the card and the flipping body so the idle float and the flip
+     don't fight over `transform`; perspective sits here so the flip keeps its depth. */
+  .subject-card-float {
+    perspective: 1400px;
+    transition: translate 0.3s ease-out;
+  }
+
+  /* soft ground shadow that tightens as the card rises */
+  .subject-card::after {
+    content: "";
+    position: absolute;
+    left: 14%;
+    right: 14%;
+    bottom: -14px;
+    height: 14px;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgb(0 0 0 / 0.6), transparent 70%);
+  }
+
+  .subject-card-body {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.2, 0.75, 0.2, 1);
+  }
+
+  .subject-card[data-flipped="true"] .subject-card-body {
+    transform: rotateY(180deg);
+  }
+
+  .subject-card-face {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    text-align: left;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition:
+      border-color 0.25s ease-out,
+      box-shadow 0.25s ease-out;
+  }
+
+  .deck-face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transition:
+      border-color 0.25s ease-out,
+      box-shadow 0.25s ease-out;
+  }
+
+  .subject-card-face--front {
+    transform: rotateY(0deg);
+    cursor: pointer;
+  }
+
+  .subject-card-face--back {
+    transform: rotateY(180deg);
+  }
+
+  /* auto-height face: grows with its content instead of filling a fixed aspect box */
+  .subject-card-face--panel {
+    position: relative;
+    inset: auto;
+  }
+
+  .subject-card-inner {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    border-radius: calc(1.25rem - 1px);
+  }
+
+  /* list rows float less */
+  .subject-card--row {
+    --float-amp: 4px;
+  }
+
+  .subject-card--row::after {
+    left: 6%;
+    right: 6%;
+    bottom: -10px;
+    height: 10px;
+  }
+
+  @media (hover: hover) {
+    /* `translate` composes with the float animation's `transform` */
+    .subject-card:not(.subject-card--soon):hover .subject-card-float {
+      translate: 0 -4px;
+    }
+
+    /* only clickable cards get the gold edge */
+    a.subject-card:hover .subject-card-face,
+    .subject-card:hover :is(a, button).subject-card-face,
+    .subject-card:not(.subject-card--soon):hover .deck-face {
+      border-color: rgb(214 166 72 / 0.35);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.05),
+        0 24px 44px -20px rgb(0 0 0 / 0.9);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .subject-card-float {
+    animation: card-float 5.2s ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  .subject-card::after {
+    animation: card-float-shadow 5.2s ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  /* hold still while the student is picking a paper */
+  .subject-card[data-flipped="true"] .subject-card-float,
+  .subject-card[data-flipped="true"]::after {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes card-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-1 * var(--float-amp, 8px)));
+  }
+}
+
+@keyframes card-float-shadow {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scaleX(0.82);
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-card-float,
+  .subject-card-body {
+    transition: none;
+  }
+}
