@@ -1,0 +1,83 @@
+import type { Role } from "@/generated/prisma/client";
+import {
+  LayoutDashboard,
+  CalendarClock,
+  Trophy,
+  ListChecks,
+  PlayCircle,
+  MessageSquare,
+  Mail,
+  type LucideIcon,
+} from "lucide-react";
+
+export type StaffNavItem = {
+  label: string;
+  href: string;
+  roles: Role[];
+};
+
+export type StaffNavGroup = {
+  label: string;
+  roles: Role[];
+  items: StaffNavItem[];
+};
+
+export type StaffNavEntry =
+  { type: "link"; item: StaffNavItem } | { type: "group"; group: StaffNavGroup };
+
+export const STAFF_NAV: StaffNavEntry[] = [
+  {
+    type: "link",
+    item: { label: "Dashboard", href: "/manager", roles: ["ADMIN", "MANAGER"] },
+  },
+  {
+    type: "group",
+    group: {
+      label: "Content",
+      roles: ["ADMIN", "MANAGER"],
+      items: [
+        { label: "Playlists", href: "/manager/playlists", roles: ["ADMIN", "MANAGER"] },
+        { label: "Special videos", href: "/manager/special-videos", roles: ["ADMIN", "MANAGER"] },
+        { label: "Official notes", href: "/manager/official-notes", roles: ["ADMIN", "MANAGER"] },
+        { label: "Quizzes", href: "/manager/quizzes", roles: ["ADMIN", "MANAGER"] },
+        { label: "Tips & tricks", href: "/manager/tips", roles: ["ADMIN", "MANAGER"] },
+      ],
+    },
+  },
+  {
+    type: "link",
+    item: { label: "Students", href: "/manager/students", roles: ["ADMIN", "MANAGER"] },
+  },
+  {
+    type: "link",
+    item: { label: "Feedback", href: "/manager/feedback", roles: ["ADMIN", "MANAGER"] },
+  },
+  {
+    type: "group",
+    group: {
+      label: "Admin",
+      roles: ["ADMIN"],
+      items: [
+        { label: "Curriculum", href: "/admin/curriculum", roles: ["ADMIN"] },
+        { label: "Staff & roles", href: "/admin/staff-roles", roles: ["ADMIN"] },
+        { label: "Point rules", href: "/admin/point-rules", roles: ["ADMIN"] },
+        { label: "Audit log", href: "/admin/audit-log", roles: ["ADMIN"] },
+      ],
+    },
+  },
+];
+
+export type StudentNavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export const STUDENT_NAV: StudentNavItem[] = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Lectures", href: "/lectures", icon: PlayCircle },
+  { label: "Routine", href: "/routine", icon: CalendarClock },
+  { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
+  { label: "Quiz results", href: "/quiz-results", icon: ListChecks },
+  { label: "Feedback", href: "/feedback", icon: MessageSquare },
+];
